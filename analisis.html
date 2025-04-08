@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% block title %}Análisis{% endblock %}
+{% block content %}
+<div class="container my-4">
+  <h1>Análisis de Movimientos</h1>
+  <!-- Tarjetas resumen (si deseas incluirlas) -->
+  <div class="row">
+    <div class="col-md-4">
+      <div class="card text-white bg-primary mb-3">
+        <div class="card-body">
+          <h2 class="card-title">Ingresos Totales</h2>
+          <h4 class="card-text">€ {{ total_ingresos }}</h4>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-white bg-danger mb-3">
+        <div class="card-body">
+          <h2 class="card-title">Egresos Totales</h2>
+          <h4 class="card-text">€ {{ total_gastos }}</h4>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-white bg-success mb-3">
+        <div class="card-body">
+          <h2 class="card-title">Saldo Total</h2>
+          <h4 class="card-text">€ {{ saldo_total }}</h4>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Canvas para el gráfico -->
+  <div class="row my-4">
+    <div class="col-md-12">
+      <canvas id="movimientosChart"></canvas>
+    </div>
+  </div>
+
+  <!-- Tabla de movimientos -->
+  <div class="row my-4">
+    <div class="col-md-12">
+      <h3>Movimientos</h3>
+      <table class="table table-striped table-bordered">
+        <thead class="table-dark">
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Descripción</th>
+            <th scope="col">Monto</th>
+            <th scope="col">Tipo</th>
+            <th scope="col">Fecha</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for mov in movimientos %}
+          <tr>
+            <td>{{ mov[0] }}</td>
+            <td>{{ mov[1] }}</td>
+            <td>{{ mov[2] }}</td>
+            <td>{{ mov[3] }}</td>
+            <td>{{ mov[4] }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Importa Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // Convertir los movimientos de Flask a un objeto JavaScript
+  const movimientos = {{ movimientos|tojson }};
+  
+  // Inicializamos arrays para las etiquetas y para cada dataset
+  const etiquetas = [];
+  const ingresos = [];
+  const egresos = [];
+
+  // Recorremos los movimientos (se asume que cada movimiento es: [id, descripcion, monto, tipo, fecha])
+  movimientos.forEach(mov => {
+    // Usamos la fecha como etiqueta
+    etiquetas.push(mov[4]);
+    // Según el tipo, agregamos el monto al dataset correspondiente; si no coincide, dejamos null (o 0)
+    if(mov[3] === 'ingreso'){
+      ingresos.push(mov[2]);
+      egresos.push(null);
+    } else if(mov[3] === 'egreso'){
+      egresos.push(mov[2]);
+      ingresos.push(null);
+    } else {
+      ingresos.push(null);
+      egresos.push(null);
+    }
+  });
+
+  const data = {
+    labels: etiquetas,
+    datasets: [
+      {
+        label: 'Ingresos',
+        fill: false,
+        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        data: ingresos,
+      },
+      {
+        label: 'Egresos',
+        fill: false,
+        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        borderColor: 'rgba(255, 99, 132, 1)',
+        data: egresos,
+      }
+    ]
+  };
+
+  const config = {
+    type: 'line',
+    data: data,
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'top' },
+        title: { display: true, text: 'Movimientos Financieros' }
+      },
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  };
+
+  window.addEventListener('load', () => {
+    const ctx = document.getElementById('movimientosChart').getContext('2d');
+    new Chart(ctx, config);
+  });
+</script>
+{% endblock %}

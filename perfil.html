@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Perfil{% endblock %}
+{% block content %}
+<div class="container my-4 d-flex justify-content-center">
+  <div class="card" style="max-width: 400px; width: 100%;">
+    <div class="card-header text-center">
+      Perfil de Usuario
+    </div>
+    {% if usuario %}
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item"><strong>ID:</strong> {{ usuario[3] }}</li>
+      <li class="list-group-item"><strong>Nombre:</strong> {{ usuario[0] }}</li>
+      <li class="list-group-item"><strong>Email:</strong> {{ usuario[1] }}</li>
+      <li class="list-group-item"><strong>Contraseña:</strong> {{ usuario[2] }}</li>
+    </ul>
+    {% else %}
+    <div class="card-body text-center text-danger">
+      No se encontró información del usuario.
+    </div>
+    {% endif %}
+    <div class="card-footer text-center">
+      <a href="/inicio" class="btn btn-outline-danger">Regresar</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Analisis{% endblock %}
+{% block content %} 
+<h1>Inicio de tu proyecto</h1>
+  <!-- Tarjetas de resumen -->
+  <div class="container my-4">
+    <div class="row">
+      <div class="col-md-4">
+        <div class="card text-white bg-primary mb-3">
+          <div class="card-body">
+            <h2 class="card-title">Ingresos Totales</h2>
+            <h4 class="card-text">€ {{ total_ingresos }}</h4>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card text-white bg-danger mb-3">
+          <div class="card-body">
+            <h2 class="card-title">Egresos Totales</h2>
+            <h4 class="card-text">€ {{ total_gastos }}</h4>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card text-white bg-success mb-3">
+          <div class="card-body">
+            <h2 class="card-title">Saldo Total</h2>
+            <h4 class="card-text">€ {{ saldo_total }}</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Formulario para agregar nuevo movimiento centrado en un card -->
+  <div class="container my-4">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card shadow">
+          <div class="card-header text-center">
+            <h4>Agregar nuevo movimiento</h4>
+          </div>
+          <div class="card-body">
+            <form method="POST" action="{{ url_for('agregar_movimiento') }}">
+              <div class="mb-3">
+                <label for="descripcion" class="form-label">Descripción</label>
+                <input type="text" class="form-control" name="descripcion" id="descripcion" placeholder="Descripción">
+              </div>
+              <div class="mb-3">
+                <label for="monto" class="form-label">Monto</label>
+                <input type="number" step="0.01" class="form-control" name="monto" id="monto" placeholder="Monto">
+              </div>
+              <div class="mb-3">
+                <label for="tipo" class="form-label">Tipo</label>
+                <select class="form-select" name="tipo" id="tipo">
+                  <option value="ingreso">Ingreso</option>
+                  <option value="egreso">Egreso</option>
+                </select>
+              </div>
+              <div class="d-grid">
+                <button type="submit" class="btn btn-primary">Agregar Movimiento</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla de movimientos -->
+  <div class="container my-4">
+    <h3>Movimientos</h3>
+    <table class="table table-striped table-bordered">
+      <thead class="table-dark">
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Descripción</th>
+          <th scope="col">Monto</th>
+          <th scope="col">Tipo</th>
+          <th scope="col">Fecha</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for movimientos in movimientos %}
+        <tr>
+          <td>{{ movimientos[0] }}</td>
+          <td>{{ movimientos[1] }}</td>
+          <td>{{ movimientos[2] }}</td>
+          <td>{{ movimientos[3] }}</td>
+          <td>{{ movimientos[4] }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
